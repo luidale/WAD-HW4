@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Posts</title>
+</head>
+<body>
+    
+        <%- include('./partials/navbar.ejs') %>
+    
+    <div class="body-container">
+    <section class="entry">
+        <div class="entry-topbar">
+            <div>
+                <img src="images/me.png" alt="Me">
+            </div>
+            <div class="entry-datetext">
+                <p>September 23rd 2021</p>
+            </div>
+        </div>
+        <img src="images/tornado.jpg" alt="Tornado">
+        <div class="entry-text">
+            <p>I think it's going to rain</p>
+        </div>
+        <div class="entry-react">
+            <img src="images/like-icon-png-0.jpg" alt="I like it!">
+        </div>
+    </section>
+</div>
+
+    <!--
+    <div >
+        <h2>All posts</h2>
+        <% if (posts.length > 0) { %>
+            <% posts.forEach(post => { %>
+                <h3 class="title">
+                <%= post.title %>
+                </h3>
+                <p class="body">
+                <%= post.body %>
+                </p>
+            <% }) %>
+        <% } else {%>
+            <p> You did not post anything ... </p>
+        <% } %>
+        </div>
+    -->
+    <%- include('./partials/footer.ejs') %>
+</body>
+</html>
