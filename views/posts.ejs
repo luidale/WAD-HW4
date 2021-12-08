@@ -12,42 +12,44 @@
         <%- include('./partials/navbar.ejs') %>
     
     <div class="body-container">
-    <section class="entry">
-        <div class="entry-topbar">
-            <div>
-                <img src="images/me.png" alt="Me">
-            </div>
-            <div class="entry-datetext">
-                <p>September 23rd 2021</p>
-            </div>
-        </div>
-        <img src="images/tornado.jpg" alt="Tornado">
-        <div class="entry-text">
-            <p>I think it's going to rain</p>
-        </div>
-        <div class="entry-react">
-            <img src="images/like-icon-png-0.jpg" alt="I like it!">
-        </div>
-    </section>
-</div>
-
-    <!--
-    <div >
-        <h2>All posts</h2>
         <% if (posts.length > 0) { %>
             <% posts.forEach(post => { %>
-                <h3 class="title">
-                <%= post.title %>
-                </h3>
-                <p class="body">
-                <%= post.body %>
-                </p>
+                <section class="entry">
+                    <div class="entry-topbar">
+                        <div>
+                            <img src="images/me.png" alt="Me">
+                        </div>
+                        <div class="entry-datetext">
+                            <p id="date">
+                                <%= post.created_at %>
+                            </p>
+                        </div>
+                    </div>
+                    <% if (post.imageurl != null){ %>
+                        <img src=<%= post.imageurl %> >
+                    <% } %>
+                    
+                    
+                    <div class="entry-title">
+                        <p>
+                            <%= post.title %>
+                        </p>
+                    </div>
+                    <div class="entry-text">
+                        <p>
+                            <%= post.body %>
+                        </p>
+                    </div>
+                    <div class="entry-react">
+                        <img src="images/like-icon-png-0.jpg" alt="I like it!">
+                    </div>
+                </section>
             <% }) %>
-        <% } else {%>
-            <p> You did not post anything ... </p>
+        <% } else { %>
+            <p>You did not post anything...</p>
         <% } %>
-        </div>
-    -->
+    </div>
+
     <%- include('./partials/footer.ejs') %>
 </body>
 </html>
