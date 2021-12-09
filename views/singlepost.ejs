@@ -9,18 +9,42 @@
 </head>
 <body>
     <%- include('./partials/navbar.ejs') %>
-
-    <div class="singlepost">
-        <h2>
-            <%= posts.title %>
-        </h2>
-        <div class="content">
+    <div class="body-container">
+    <section class="entry">
+        <div class="entry-topbar">
+            <div>
+                <img src="images/me.png" alt="Me">
+            </div>
+            <div class="entry-datetext">
+                <p id="date">
+                    <%= post.created_at %>
+                </p>
+            </div>
+        </div>
+        <% if (post.imageurl != null){ %>
+            <img src=<%= post.imageurl %> >
+        <% } %>
+        
+        
+        <div class="entry-title">
             <p>
-                <%= posts.body %>
+                <%= post.title %>
             </p>
         </div>
-        <a class="delete" data-del="<%= posts.id %>">Delete</a>
-    </div>
+        <div class="entry-text">
+            <p>
+                <%= post.body %>
+            </p>
+        </div>
+        <div class="entry-react">
+            <img  onclick="addlike(<%= post.likes %>, <%= post.id %>)" src="images/like-icon-png-0.jpg" alt="I like it!">
+            <div id=<%= post.id %> class="entry-likenumber">
+                <%= post.likes %> likes
+            </div>
+        </div>
+        <a class="delete" data-del="<%= post.id %>">Delete</a>
+    </section>
+    </div>  
     <script>
         const delreq = document.querySelector('a.delete');
         delreq.addEventListener('click', (e) => {
@@ -29,6 +53,23 @@
                 method: 'DELETE',
             }).then(window.location.href = '/posts')
         });
+
+        function addlike(likes,id) {
+            document.getElementById(id).innerHTML = likes + 1 + " likes";
+            //document.getElementById(id).disabled = true;
+            console.log(likes);
+            const endpoint = `/posts/${id}`;
+            fetch(endpoint, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    "likes": likes + 1,
+                    "id": id
+                    }),
+                headers: { 'Content-Type': 'application/json' }
+            })
+
+            console.log("Done");
+        }
     </script>
     
     <%- include('./partials/footer.ejs') %>

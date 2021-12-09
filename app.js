@@ -10,9 +10,13 @@ app.set('view engine', 'ejs');
 //without this middleware, we cannot use data submitted by forms
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static('public'));
+//app.use(express.static(__dirname + '/public'));
+//app.use(express.static('public'));
 
-
+//const path = require('path')
+//app.use("/static", express.static(path.join(__dirname, 'public')))
+app.use('/', express.static(__dirname + '/public'));
+app.use('/posts', express.static(__dirname + '/public'));
 // listen for requests on port 3000
 app.listen(3000);
 
@@ -57,13 +61,18 @@ app.get('/posts', async(req, res) => {
 
 app.get('/posts/:id', async(req, res) => {
     try {
-    const { id } = req.params;
-    console.log("get a post request has arrived");
-    const posts = await pool.query(
-    "SELECT * FROM posts WHERE id = $1", [id]
-    );
-    res.json(posts.rows[0]);
-    
+        const { id } = req.params;
+        console.log("get a post request has arrived");
+        const posts = await pool.query(
+            "SELECT * FROM posts WHERE id = $1", [id]
+        );
+        // To convert createion date to more human readable form
+        posts.rows.forEach(function(element){
+            element.created_at = convertDate(element.created_at);
+        })
+        //res.json(posts.rows[0]);
+        res.render('singlepost', { post: posts.rows[0] });
+        
     } catch (err) {
     console.error(err.message);
     }
@@ -84,34 +93,36 @@ app.post('/posts', async(req, res) => {
 
 app.put('/posts/:id', async(req, res) => {
     try {
-    const { id } = req.params;
-    const post = req.body;
-    console.log("update request has arrived");
-    const updatepost = await pool.query(
-    "UPDATE posts SET (title, body, imageurl) = ($2, $3, $4) WHERE id =$1", [id, post.title, post.body, post.imageurl]
-    );
-    res.json(post);
+        const { id } = req.params;
+        const { likes }= req.body;
+        console.log("update request has arrived");
+        const updatepost = await pool.query(
+            "UPDATE posts SET likes = $2 WHERE id =$1", [id, likes]
+        );
+        //res.json(post);
+        res.redirect('posts');
     } catch (err) {
-    console.error(err.message);
+        console.error(err.message);
     }
    });
 
 app.delete('/posts/:id', async(req, res) => {
     try {
-    const { id } = req.params;
-    const post = req.body;
-    console.log("delete a post request has arrived");
-    const deletepost = await pool.query("DELETE FROM posts WHERE id = $1", [id]
-    );
-    res.json(post);
+        const { id } = req.params;
+        const post = req.body;
+        console.log("delete a post request has arrived");
+        const deletepost = await pool.query("DELETE FROM posts WHERE id = $1", [id]
+        );
+        //res.json(post);
+        res.redirect('posts');
     } catch (err) {
-    console.error(err.message);
+        console.error(err.message);
     }
    });
 
-app.get('/singlepost', (req, res) => {
+app.get('/singlepost2', (req, res) => {
     /*res.sendFile('./views/posts.html', { root: __dirname });*/
-    res.render('singlepost');
+    res.render('singlepost2');
 });
 
 app.get('/addnewpost', (req, res) => {
@@ -157,3 +168,5 @@ function convertDate(dateString) {
     return  monthNames[month] + " " + day + " " + (1900 + year);
 
 }
+
+
