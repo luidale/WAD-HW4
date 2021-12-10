@@ -1,4 +1,5 @@
 const express = require('express');
+const { password } = require('pg/lib/defaults');
 const pool = require('./database');
 //const cors = require('cors');
 
@@ -55,12 +56,17 @@ app.get('/posts', async(req, res) => {
 
         const fs = require("fs");
 
-        // To convert createion date to more human readable form
+        // Check and convert post data
         posts.rows.forEach(function(element) {
+            // Convert date to human readable
             element.created_at = convertDate(element.created_at);
-            if (fs.existsSync("public/" + element.imageurl) == false) {
-                console.log("Image for " + element.id + " does not exist (path " + element.imageurl + ")")
-                element.imageurl = null;
+            // Check images
+            if (element.imageurl != null){
+                if (!(element.imageurl.startsWith("www") || element.imageurl.startsWith("http")) 
+                    && (fs.existsSync("public/" + element.imageurl) == false)) {
+                        console.log("Image for " + element.id + " does not exist (path " + element.imageurl + ")")
+                        element.imageurl = null;
+                }
             }
         })
 
@@ -84,14 +90,19 @@ app.get('/posts/:id', async(req, res) => {
 
             const fs = require("fs");
 
-            // To convert createion date to more human readable form
+            // Check and convert post data
             posts.rows.forEach(function(element) {
-                    element.created_at = convertDate(element.created_at);
-                    if (fs.existsSync("public/" + element.imageurl) == false) {
-                        console.log("Image for " + element.id + " does not exist (path " + element.imageurl + ")")
-                        element.imageurl = null;
+                // Convert date to human readable
+                element.created_at = convertDate(element.created_at);
+                // Check images
+                if (element.imageurl != null){
+                    if (!(element.imageurl.startsWith("www") || element.imageurl.startsWith("http")) 
+                        && (fs.existsSync("public/" + element.imageurl) == false)) {
+                            console.log("Image for " + element.id + " does not exist (path " + element.imageurl + ")")
+                            element.imageurl = null;
                     }
-                })
+                }
+            })
                 //res.json(posts.rows[0]);
 
             res.render('singlepost', { post: posts.rows[0] });

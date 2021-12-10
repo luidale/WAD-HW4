@@ -21,7 +21,8 @@
 
             <% if (posts.length > 0) { %>
                 <% posts.forEach(post => { %>
-                    <section class="entry" onclick="location.href='<%= post.id %>';">
+                    <!-- onclick="location.href='<%= post.id %>';"-->
+                    <section  class="entry"  onclick="location.href='<%= post.id %>';">
                         <!--<section class="entry" onclick="navigateToSinglePost(<%= post.id %>)"></section>-->
                         <div class="entry-topbar">
                             <div>
@@ -44,12 +45,13 @@
                                     </p>
                                 </div>
                                 <div class="entry-text">
-                                    <p>
+                                    <p id = "demo">
                                         <%= post.body %>
                                     </p>
                                 </div>
+                        
                                 <div class="entry-react">
-                                    <img onclick="addlike(<%= post.likes %>, <%= post.id %>)" src="images/like-icon-png-0.jpg" alt="I like it!">
+                                    <img id='like-image' onclick="addlike(<%= post.likes %>, <%= post.id %>)" src="images/like-icon-png-0.jpg" alt="I like it!">
                                     <div id=<%=post.id %> class="entry-likenumber">
                                         <%= post.likes %> likes
                                     </div>
@@ -88,6 +90,20 @@
                     fetch(endpoint, {
                         method: 'GET'
                     })
+
+                }
+
+                // attempt to achieve navigation with eventlistener
+                var elements = document.getElementsByClassName("entry");
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].addEventListener("click", function(event) {
+
+                        console.log(event.target.id);
+                        // is not activated when like aimage is clicked
+                        if (event.target.id != 'like-image'){
+                            console.log("hello22!"); 
+                        }
+                    });
 
                 }
             </script>
