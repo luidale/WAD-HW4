@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,11 +8,29 @@
     <link rel="stylesheet" href="style.css">
     <title>Add new post</title>
 </head>
+
 <body>
     <%- include('./partials/navbar.ejs') %>
 
-    <h1>Add new post</h1>
-    
-    <%- include('./partials/footer.ejs') %>
+        <div class="body-container" id="addpost">
+
+            <h1>Add new post</h1>
+
+            <div class="create-post">
+                <form action="/posts" method="POST">
+                    <label for="title"></label>
+                    <input type="text" id="title" name="title" placeholder="Post title" required><br><br>
+                    <label for="body"></label>
+                    <textarea id="body" name="body" placeholder="Post body" required></textarea><br><br>
+                    <label for="urllink"></label>
+                    <input type="text" id="urllink" name="imageurl" placeholder="Image URL link"></textarea><br><br>
+                    <button>Add new post</button>
+                </form>
+            </div>
+
+        </div>
+
+        <%- include('./partials/footer.ejs') %>
 </body>
+
 </html>
