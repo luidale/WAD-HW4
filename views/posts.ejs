@@ -85,6 +85,7 @@
                     console.log("Done");
                 }
 
+                 // attempt to achieve navigation - not used
                 function navigateToSinglePost(id) {
                     const endpoint = `${id}`;
                     fetch(endpoint, {
@@ -93,12 +94,13 @@
 
                 }
 
-                // attempt to achieve navigation with eventlistener
+                // attempt to achieve navigation with eventlistener - not working
                 var elements = document.getElementsByClassName("entry");
                 for (var i = 0; i < elements.length; i++) {
                     elements[i].addEventListener("click", function(event) {
 
                         console.log(event.target.id);
+                        console.log(event.target);
                         // is not activated when like aimage is clicked
                         if (event.target.id != 'like-image'){
                             console.log("hello22!"); 

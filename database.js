@@ -1,10 +1,10 @@
 const Pool = require('pg').Pool;
 const pool = new Pool({
  user: "postgres",
- password: "parool",
+ password: "postgres",
  database: "postgres",
  host: "localhost",
- port: "5432"
+ port: "5434"
 });
 module.exports = pool;
 
@@ -12,7 +12,7 @@ module.exports = pool;
 Required database table can be created:
 
 CREATE TABLE posts (
-	id			bigint NOT NULL PRIMARY KEY,
+	id			bigint NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	title		character varying,
 	body 		character varying,
 	imageurl	character varying,
