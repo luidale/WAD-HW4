@@ -22,29 +22,29 @@
             <% if (posts.length > 0) { %>
                 <% posts.forEach(post => { %>
                     <!-- onclick="location.href='<%= post.id %>';"-->
-                    <section  class="entry"  onclick="location.href='<%= post.id %>';">
+                    <section  class="entry">
                         <!--<section class="entry" onclick="navigateToSinglePost(<%= post.id %>)"></section>-->
-                        <div class="entry-topbar">
+                        <div class="entry-topbar" onclick="location.href='<%= post.id %>';">
                             <div>
                                 <img src="images/me.png" alt="Me">
                             </div>
-                            <div class="entry-datetext">
+                            <div class="entry-datetext" onclick="location.href='<%= post.id %>';">
                                 <p id="date">
                                     <%= post.created_at %>
                                 </p>
                             </div>
                         </div>
                         <% if (post.imageurl != null){ %>
-                            <img src="<%=post.imageurl %>">
+                            <img src="<%=post.imageurl %>" onclick="location.href='<%= post.id %>';">
                             <% } %>
 
 
-                                <div class="entry-title">
+                                <div class="entry-title" onclick="location.href='<%= post.id %>';">
                                     <p>
                                         <%= post.title %>
                                     </p>
                                 </div>
-                                <div class="entry-text">
+                                <div class="entry-text" onclick="location.href='<%= post.id %>';">
                                     <p id = "demo">
                                         <%= post.body %>
                                     </p>
