@@ -1,4 +1,5 @@
 const express = require('express');
+const { password } = require('pg/lib/defaults');
 const pool = require('./database');
 //const cors = require('cors');
 
@@ -25,10 +26,10 @@ app.listen(3000);
 2- arg2: represents a function that takes in request and response objects */
 
 //app.get('/posts', (req, res) => {
-    /* res.sendFile() is a method that can be used to send files as its name indicates. However, it takes the absolute
-    not the relative path to the file. Therefore, you need to specify the root directory of the file.
-    To avoid this confusion, you can use "__dirname", which you have access to after installing "lodash" */
-    /*res.sendFile('./views/index.html', { root: __dirname });*/
+/* res.sendFile() is a method that can be used to send files as its name indicates. However, it takes the absolute
+not the relative path to the file. Therefore, you need to specify the root directory of the file.
+To avoid this confusion, you can use "__dirname", which you have access to after installing "lodash" */
+/*res.sendFile('./views/index.html', { root: __dirname });*/
 /*    let posts = [
         {title: "Post1", body: "Content1" },
         {title: "Post2", body: "Content2" },
@@ -40,6 +41,11 @@ app.listen(3000);
 });
 */
 
+app.get('/', (req, res) => {
+    /*res.sendFile('./views/posts.html', { root: __dirname });*/
+    res.render('login');
+});
+
 app.get('/posts', async(req, res) => {
     try {
         console.log("get posts request has arrived");
@@ -47,15 +53,26 @@ app.get('/posts', async(req, res) => {
             "SELECT * FROM posts"
         );
         //res.json(posts.rows); // for testing with Postman
-        
-        // To convert createion date to more human readable form
-        posts.rows.forEach(function(element){
+
+        const fs = require("fs");
+
+        // Check and convert post data
+        posts.rows.forEach(function(element) {
+            // Convert date to human readable
             element.created_at = convertDate(element.created_at);
+            // Check images
+            if (element.imageurl != null){
+                if (!(element.imageurl.startsWith("www") || element.imageurl.startsWith("http")) 
+                    && (fs.existsSync("public/" + element.imageurl) == false)) {
+                        console.log("Image for " + element.id + " does not exist (path " + element.imageurl + ")")
+                        element.imageurl = null;
+                }
+            }
         })
 
-        res.render('posts', {posts: posts.rows});
+        res.render('posts', { posts: posts.rows });
     } catch (err) {
-        console.error(err.message);
+        console.error("posts error: " + err.message);
     }
 });
 
@@ -66,35 +83,56 @@ app.get('/posts/:id', async(req, res) => {
         const posts = await pool.query(
             "SELECT * FROM posts WHERE id = $1", [id]
         );
-        // To convert createion date to more human readable form
-        posts.rows.forEach(function(element){
-            element.created_at = convertDate(element.created_at);
-        })
-        //res.json(posts.rows[0]);
-        res.render('singlepost', { post: posts.rows[0] });
-        
+
+        if (posts.rows[0] == undefined) {
+            res.status(404).render('404');
+        } else {
+
+            const fs = require("fs");
+
+            // Check and convert post data
+            posts.rows.forEach(function(element) {
+                // Convert date to human readable
+                element.created_at = convertDate(element.created_at);
+                // Check images
+                if (element.imageurl != null){
+                    if (!(element.imageurl.startsWith("www") || element.imageurl.startsWith("http")) 
+                        && (fs.existsSync("public/" + element.imageurl) == false)) {
+                            console.log("Image for " + element.id + " does not exist (path " + element.imageurl + ")")
+                            element.imageurl = null;
+                    }
+                }
+            })
+                //res.json(posts.rows[0]);
+
+            res.render('singlepost', { post: posts.rows[0] });
+
+        }
+
+
     } catch (err) {
-    console.error(err.message);
+        console.error("singlepost error: " + err.message);
     }
-   });
+});
 
 app.post('/posts', async(req, res) => {
     try {
-    console.log("a post request has arrived");
-    const post = req.body;
-    const newpost = await pool.query(
-    "INSERT INTO posts(title, body, imageurl) values ($1, $2, $3) RETURNING*", [post.title, post.body, post.imageurl]
-    );
-    res.json( newpost );
+        console.log("a post request has arrived");
+        const post = req.body;
+        const newpost = await pool.query(
+            "INSERT INTO posts(title, body, imageurl) values ($1, $2, $3) RETURNING*", [post.title, post.body, post.imageurl]
+        );
+        // res.json(newpost);
+        res.redirect('posts');
     } catch (err) {
-    console.error(err.message);
+        console.error(err.message);
     }
-   });
+});
 
 app.put('/posts/:id', async(req, res) => {
     try {
         const { id } = req.params;
-        const { likes }= req.body;
+        const { likes } = req.body;
         console.log("update request has arrived");
         const updatepost = await pool.query(
             "UPDATE posts SET likes = $2 WHERE id =$1", [id, likes]
@@ -104,21 +142,20 @@ app.put('/posts/:id', async(req, res) => {
     } catch (err) {
         console.error(err.message);
     }
-   });
+});
 
 app.delete('/posts/:id', async(req, res) => {
     try {
         const { id } = req.params;
         const post = req.body;
         console.log("delete a post request has arrived");
-        const deletepost = await pool.query("DELETE FROM posts WHERE id = $1", [id]
-        );
+        const deletepost = await pool.query("DELETE FROM posts WHERE id = $1", [id]);
         //res.json(post);
         res.redirect('posts');
     } catch (err) {
         console.error(err.message);
     }
-   });
+});
 
 app.get('/singlepost2', (req, res) => {
     /*res.sendFile('./views/posts.html', { root: __dirname });*/
@@ -165,8 +202,6 @@ function convertDate(dateString) {
     }
     var year = date.getYear();
 
-    return  monthNames[month] + " " + day + " " + (1900 + year);
+    return monthNames[month] + " " + day + " " + (1900 + year);
 
 }
-
-
